@@ -295,6 +295,18 @@ public final class DrawManager {
 	}
 
 	/**
+	 * Draws pause.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	public void drawPause(final Screen screen) {
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, "pause", screen.getHeight() / 2);
+		drawCenteredRegularString(screen, "press esc key to resume", screen.getHeight() / 2 + 30);
+	}
+
+	/**
 	 * Draws main menu.
 	 * 
 	 * @param screen

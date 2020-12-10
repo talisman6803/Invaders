@@ -70,6 +70,9 @@ public class GameScreen extends Screen {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	/** Checks Pause Status. */
+	private boolean pause = false;
+	private boolean pressed = false;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -146,58 +149,68 @@ public class GameScreen extends Screen {
 	 */
 	protected final void update() {
 		super.update();
-
-		if (this.inputDelay.checkFinished() && !this.levelFinished) {
-
-			if (!this.ship.isDestroyed()) {
-				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
-						|| inputManager.isKeyDown(KeyEvent.VK_D);
-				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
-						|| inputManager.isKeyDown(KeyEvent.VK_A);
-
-				boolean isRightBorder = this.ship.getPositionX()
-						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
-				boolean isLeftBorder = this.ship.getPositionX()
-						- this.ship.getSpeed() < 1;
-
-				if (moveRight && !isRightBorder) {
-					this.ship.moveRight();
-				}
-				if (moveLeft && !isLeftBorder) {
-					this.ship.moveLeft();
-				}
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
-						this.bulletsShot++;
-			}
-
-			if (this.enemyShipSpecial != null) {
-				if (!this.enemyShipSpecial.isDestroyed())
-					this.enemyShipSpecial.move(2, 0);
-				else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
-					this.enemyShipSpecial = null;
-
-			}
-			if (this.enemyShipSpecial == null
-					&& this.enemyShipSpecialCooldown.checkFinished()) {
-				this.enemyShipSpecial = new EnemyShip();
-				this.enemyShipSpecialCooldown.reset();
-				this.logger.info("A special ship appears");
-			}
-			if (this.enemyShipSpecial != null
-					&& this.enemyShipSpecial.getPositionX() > this.width) {
-				this.enemyShipSpecial = null;
-				this.logger.info("The special ship has escaped");
-			}
-
-			this.ship.update();
-			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+		if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
+			if (!pressed) pressed = true;
 		}
+		else {
+			if (pressed) {
+				pressed = false;
+				pause = !pause;
+			}
+		}
+		if (!pause) {
+			if (this.inputDelay.checkFinished() && !this.levelFinished) {
+				if (!this.ship.isDestroyed()) {
+					boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+							|| inputManager.isKeyDown(KeyEvent.VK_D);
+					boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+							|| inputManager.isKeyDown(KeyEvent.VK_A);
+					boolean isRightBorder = this.ship.getPositionX()
+							+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+					boolean isLeftBorder = this.ship.getPositionX()
+							- this.ship.getSpeed() < 1;
 
-		manageCollisions();
-		cleanBullets();
-		draw();
+					if (moveRight && !isRightBorder) {
+						this.ship.moveRight();
+					}
+					if (moveLeft && !isLeftBorder) {
+						this.ship.moveLeft();
+					}
+					if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+						if (this.ship.shoot(this.bullets))
+							this.bulletsShot++;
+
+					if (this.enemyShipSpecial != null) {
+						if (!this.enemyShipSpecial.isDestroyed())
+							this.enemyShipSpecial.move(2, 0);
+						else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+							this.enemyShipSpecial = null;
+					}
+					if (this.enemyShipSpecial == null
+							&& this.enemyShipSpecialCooldown.checkFinished()) {
+						this.enemyShipSpecial = new EnemyShip();
+						this.enemyShipSpecialCooldown.reset();
+						this.logger.info("A special ship appears");
+					}
+					if (this.enemyShipSpecial != null
+							&& this.enemyShipSpecial.getPositionX() > this.width) {
+						this.enemyShipSpecial = null;
+						this.logger.info("The special ship has escaped");
+					}
+				}
+				this.ship.update();
+				this.enemyShipFormation.update();
+				this.enemyShipFormation.shoot(this.bullets);
+			}
+
+			manageCollisions();
+			cleanBullets();
+			draw();
+		}
+		else {
+			drawManager.drawPause(this);
+			drawManager.completeDrawing(this);
+		}
 
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
