@@ -133,7 +133,8 @@ hs_err_pid*
 #################
 ## Eclipse
 #################
-
+.idea
+out
 *.pydevproject
 .project
 .metadata

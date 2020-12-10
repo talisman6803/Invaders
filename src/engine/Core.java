@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import screen.GameScreen;
 import screen.HighScoreScreen;
 import screen.ScoreScreen;
+import screen.ResetScoreScreen;
 import screen.Screen;
 import screen.TitleScreen;
 
@@ -171,6 +172,21 @@ public final class Core {
 						+ " high score screen at " + FPS + " fps.");
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing high score screen.");
+				break;
+			case 4:
+				// Reset scores menu.
+				currentScreen = new ResetScoreScreen(width, height, FPS);
+				LOGGER.info("Starting "+ WIDTH + "x" + HEIGHT
+						+ "Reset score screen at " + FPS + "fps.");
+				returnCode = frame.setScreen(currentScreen);
+				LOGGER.info("Closing title screen.");
+				break;
+			case 5:
+				// Reset Score data.
+				LOGGER.info("reset scores.");
+				FileManager.resetScores();
+				returnCode = 1;
+				LOGGER.info("Closing title screen.");
 				break;
 			default:
 				break;
