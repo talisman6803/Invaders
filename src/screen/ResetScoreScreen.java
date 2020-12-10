@@ -27,7 +27,7 @@ public class ResetScoreScreen extends Screen{
     public ResetScoreScreen(final int width, final int height, final int fps){
         super(width, height, fps);
 
-        this.returnCode = 6;
+        this.returnCode = 1;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
 
@@ -72,10 +72,10 @@ public class ResetScoreScreen extends Screen{
      * returnCode 6: No (Do not reset)
     */
     private void nextMenuItem() {
-        if (this.returnCode == 6)
+        if (this.returnCode == 1)
             this.returnCode = 5;
         else if (this.returnCode == 5)
-            this.returnCode = 6;
+            this.returnCode = 1;
     }
 
     /**
@@ -83,8 +83,8 @@ public class ResetScoreScreen extends Screen{
      */
     private void previousMenuItem() {
         if (this.returnCode == 5)
-            this.returnCode = 6;
-        else if (this.returnCode == 6)
+            this.returnCode = 1;
+        else if (this.returnCode == 1)
             this.returnCode = 5;
     }
 
