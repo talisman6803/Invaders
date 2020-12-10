@@ -5,7 +5,7 @@ jobs:
   circleci_test:
     
     docker:
-    - image: circleci/jdk8:latest
+    - image: circleci/openjdk:8-jdk
     steps:
     
     - checkout
