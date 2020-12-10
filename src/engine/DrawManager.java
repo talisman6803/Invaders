@@ -405,7 +405,7 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, yesString,
 				screen.getHeight() / 3 * 2);
-		if (option == 6)
+		if (option == 1)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
