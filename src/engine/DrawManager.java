@@ -233,14 +233,16 @@ public final class DrawManager {
 	 *
 	 * @param screen
 	 *            Screen to draw on.
-	 * @param score
+	 * @param score1
 	 *            Current score.
 	 */
-	public void drawScore(final Screen screen, final int score) {
+	public void drawScore(final Screen screen, final int score1, final int score2) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
-		String scoreString = String.format("%04d", score);
-		backBufferGraphics.drawString(scoreString, screen.getWidth() - 60, 25);
+		String scoreString1 = String.format("%04d", score1);
+		backBufferGraphics.drawString(scoreString1, screen.getWidth()/2 - 60, 25);
+		String scoreString2 = String.format("%04d", score2);
+		backBufferGraphics.drawString(scoreString2, screen.getWidth()/2 + 10, 25);
 	}
 
 	/**
@@ -248,16 +250,22 @@ public final class DrawManager {
 	 *
 	 * @param screen
 	 *            Screen to draw on.
-	 * @param lives
+	 * @param lives1
 	 *            Current lives.
 	 */
-	public void drawLives(final Screen screen, final int lives) {
+	public void drawLives(final Screen screen, final int lives1, final int lives2) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
-		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
-		Ship dummyShip = new Ship(0, 0);
-		for (int i = 0; i < lives; i++)
-			drawEntity(dummyShip, 40 + 35 * i, 10);
+		backBufferGraphics.drawString(Integer.toString(lives1), 20, 25);
+		backBufferGraphics.drawString(Integer.toString(lives2), 400, 25);
+
+		Ship dummyShip1 = new Ship(0, 0, Color.GREEN);
+		for (int i = 0; i < lives1; i++)
+			drawEntity(dummyShip1, 40 + 35 * i, 10);
+
+		Ship dummyShip2 = new Ship(0, 0, Color.RED);
+		for (int i = 0; i < lives2; i++)
+			drawEntity(dummyShip2, 360 - 35 * i, 10);
 	}
 
 	/**
@@ -423,20 +431,22 @@ public final class DrawManager {
 	 *            Screen to draw on.
 	 * @param acceptsInput
 	 *            If the screen accepts input.
-	 * @param isNewRecord
+	 * @param isNewRecord1
 	 *            If the score is a new high score.
 	 */
+
+	//수정 이루어져야 됨
 	public void drawGameOver(final Screen screen, final boolean acceptsInput,
-							 final boolean isNewRecord) {
+							 final boolean isNewRecord1, final boolean isNewRecord2) {
 		String gameOverString = "Game Over";
 		String continueOrExitString =
 				"Press Space to play again, Escape to exit";
 
-		int height = isNewRecord ? 4 : 2;
-
+		int height1 = isNewRecord1 ? 4 : 2;
+		int height2 = isNewRecord2 ? 4 : 2;
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, gameOverString, screen.getHeight()
-				/ height - fontBigMetrics.getHeight() * 2);
+				/ height1 - fontBigMetrics.getHeight() * 2);
 
 		if (acceptsInput)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -530,11 +540,11 @@ public final class DrawManager {
 	 *            Game difficulty level.
 	 * @param number
 	 *            Countdown number.
-	 * @param bonusLife
+	 * @param bonusLife1
 	 *            Checks if a bonus life is received.
 	 */
 	public void drawCountDown(final Screen screen, final int level,
-							  final int number, final boolean bonusLife) {
+							  final int number, final boolean bonusLife1, final boolean bonusLife2) {
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
@@ -542,15 +552,30 @@ public final class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			if (!bonusLife) {
+			if (!bonusLife1 && !bonusLife2) {
 				drawCenteredBigString(screen, "Level " + level,
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			} else {
-				drawCenteredBigString(screen, "Level " + level
-								+ " - Bonus life!",
-						screen.getHeight() / 2
-								+ fontBigMetrics.getHeight() / 3);
+				if(bonusLife1 && !bonusLife2){
+					drawCenteredBigString(screen, "Level " + level
+									+ " - Bonus life for Player 1!",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+				else if(!bonusLife1 && bonusLife2){
+					drawCenteredBigString(screen, "Level " + level
+									+ " - Bonus life for Player 2!",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+				else{
+					drawCenteredBigString(screen, "Level " + level
+									+ " - Bonus life for All Player!",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+
 			}
 		else if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),
