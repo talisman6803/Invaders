@@ -8,6 +8,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import screen.DifficultyScreen;
 import screen.GameScreen;
 import screen.HighScoreScreen;
 import screen.ScoreScreen;
@@ -36,28 +37,6 @@ public final class Core {
 	private static final int EXTRA_LIFE_FRECUENCY = 3;
 	/** Total number of levels. */
 	private static final int NUM_LEVELS = 7;
-	
-	/** Difficulty settings for level 1. */
-	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000);
-	/** Difficulty settings for level 2. */
-	private static final GameSettings SETTINGS_LEVEL_2 =
-			new GameSettings(5, 5, 50, 2500);
-	/** Difficulty settings for level 3. */
-	private static final GameSettings SETTINGS_LEVEL_3 =
-			new GameSettings(6, 5, 40, 1500);
-	/** Difficulty settings for level 4. */
-	private static final GameSettings SETTINGS_LEVEL_4 =
-			new GameSettings(6, 6, 30, 1500);
-	/** Difficulty settings for level 5. */
-	private static final GameSettings SETTINGS_LEVEL_5 =
-			new GameSettings(7, 6, 20, 1000);
-	/** Difficulty settings for level 6. */
-	private static final GameSettings SETTINGS_LEVEL_6 =
-			new GameSettings(7, 7, 10, 1000);
-	/** Difficulty settings for level 7. */
-	private static final GameSettings SETTINGS_LEVEL_7 =
-			new GameSettings(8, 7, 2, 500);
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -105,13 +84,6 @@ public final class Core {
 		int height = frame.getHeight();
 
 		gameSettings = new ArrayList<GameSettings>();
-		gameSettings.add(SETTINGS_LEVEL_1);
-		gameSettings.add(SETTINGS_LEVEL_2);
-		gameSettings.add(SETTINGS_LEVEL_3);
-		gameSettings.add(SETTINGS_LEVEL_4);
-		gameSettings.add(SETTINGS_LEVEL_5);
-		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
 		
 		GameState gameState;
 
@@ -130,11 +102,35 @@ public final class Core {
 				break;
 			case 2:
 				// Game & score.
+				boolean isDifficultySetting = false;
 				do {
-					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
+					// One extra live every few levels.
+					if(isDifficultySetting == false) {
+						currentScreen = new DifficultyScreen(width, height, FPS);
+						LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+								+ " difficulty screen at " + FPS + " fps.");
+						returnCode = frame.setScreen(currentScreen);
+						LOGGER.info("Difficulty screen.");
+						if (returnCode == 5) {
+							LOGGER.info("EASY MODE");
+							gameSettingsByDifficulty(-1,-1,0,400);
+							bonusLife = true;
+							isDifficultySetting = true;
+						} else if (returnCode == 6) {
+							LOGGER.info("MEDIUM MODE");
+							gameSettingsByDifficulty(0,1,20,250);
+							isDifficultySetting = true;
+						} else if (returnCode == 7) {
+							LOGGER.info("HARD MODE");
+							gameSettingsByDifficulty(1,2,50,100);
+							isDifficultySetting = true;
+							
+						} else continue;
+					}
+					
 					
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
@@ -265,5 +261,50 @@ public final class Core {
 	public static Cooldown getVariableCooldown(final int milliseconds,
 			final int variance) {
 		return new Cooldown(milliseconds, variance);
+	}
+
+	/**
+	 * Setting Level of Game
+	 * 
+	 * @param width_weight
+	 *            Add enemy formation width
+	 * @param height_weight
+	 *            Add enemy formation height
+	 * @param baseSpeed_weight
+	 *            Add speed of the enemies
+	 * @param shootingFrequency_weight
+	 *            Add Frequency of enemy shootings
+	 */
+	private static void gameSettingsByDifficulty(int width_weight, int height_weight, int baseSpeed_weight, int shootingFrequency_weight) {
+		/** Difficulty settings for level 1. */
+		final GameSettings SETTINGS_LEVEL_1 =
+		new GameSettings(4+width_weight, 4+height_weight, 60+baseSpeed_weight, 2500+shootingFrequency_weight);
+		/** Difficulty settings for level 2. */
+		final GameSettings SETTINGS_LEVEL_2 =
+		new GameSettings(5+width_weight, 5+height_weight, 50+baseSpeed_weight, 2000+shootingFrequency_weight);
+		/** Difficulty settings for level 3. */
+		final GameSettings SETTINGS_LEVEL_3 =
+		new GameSettings(6+width_weight, 5+height_weight, 40+baseSpeed_weight, 1500+shootingFrequency_weight);
+		/** Difficulty settings for level 4. */
+		final GameSettings SETTINGS_LEVEL_4 =
+		new GameSettings(6+width_weight, 6+height_weight, 30+baseSpeed_weight, 1000+shootingFrequency_weight);
+		/** Difficulty settings for level 5. */
+		final GameSettings SETTINGS_LEVEL_5 =
+		new GameSettings(7+width_weight, 6+height_weight, 20+baseSpeed_weight, 500+shootingFrequency_weight);
+		/** Difficulty settings for level 6. */
+		final GameSettings SETTINGS_LEVEL_6 = 
+		new GameSettings(7+width_weight, 7+height_weight, 10+baseSpeed_weight, 250+shootingFrequency_weight);
+		/** Difficulty settings for level 7. */
+		final GameSettings SETTINGS_LEVEL_7 =
+		new GameSettings(8+width_weight, 7+height_weight, 2+baseSpeed_weight, 100+shootingFrequency_weight);
+		
+		gameSettings.add(SETTINGS_LEVEL_1);
+		gameSettings.add(SETTINGS_LEVEL_2);
+		gameSettings.add(SETTINGS_LEVEL_3);
+		gameSettings.add(SETTINGS_LEVEL_4);
+		gameSettings.add(SETTINGS_LEVEL_5);
+		gameSettings.add(SETTINGS_LEVEL_6);
+		gameSettings.add(SETTINGS_LEVEL_7);
+		
 	}
 }
