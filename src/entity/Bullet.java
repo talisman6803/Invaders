@@ -71,4 +71,8 @@ public class Bullet extends Entity {
 	public final int getSpeed() {
 		return this.speed;
 	}
+
+	public final Ship getShip() {
+		return this.ship;
+	}
 }
