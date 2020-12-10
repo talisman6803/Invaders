@@ -2,18 +2,19 @@
 version: 2.1
 # Use a package of configuration called an orb.
 jobs:
-  test_hello:
-    
+  circleci_test:
     docker:
-    - image: circleci/node:latest
+    - image: circleci/openjdk:8-jdk
     steps:
-    
     - checkout
-    - run: echo "hello, world!"
+    - run: mvn install
     
     
 workflows:
   version: 2
   build:
     jobs:
-      - test_hello
+      - circleci_test:
+          filters:
+            branches:
+              only: circleci-project-setup
